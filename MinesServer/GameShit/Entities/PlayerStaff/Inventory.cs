@@ -8,6 +8,7 @@ using MinesServer.Server;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.Metrics;
 namespace MinesServer.GameShit.Entities.PlayerStaff
 {
     public class Inventory
@@ -281,6 +282,15 @@ namespace MinesServer.GameShit.Entities.PlayerStaff
                     }
                 },
                 {
+                    28,
+                    (p) =>
+                    {
+                        var coord = p.GetDirCord();
+                        
+                        return false;
+                    }
+                },
+                {
                     29, (p) => {
                         var coord = p.GetDirCord(true);
                         if (World.W.CanBuildPack(-2, 2, -2, 1, coord.x, coord.y, p))
@@ -414,13 +424,39 @@ namespace MinesServer.GameShit.Entities.PlayerStaff
         public void Choose(int id, Player p)
         {
             AddChoose(id);
-            ITopLevelPacket packet = InventoryPacket.Choose("ты хуесос", new bool[0, 0], 123, 123, 12);
-            selected = id;
-            if (id == -1)
-                packet = InventoryPacket.Close();
-            p.connection?.SendU(InvToSend());
-            p.connection?.SendU(packet);
-        }
+            ITopLevelPacket packet = InventoryPacket.Choose("", new bool[0, 0], 123, 123, 12);
+            var coord = p.GetDirCord(true);
+            if (id == 1)
+            {
+                 packet = InventoryPacket.Choose("[ENTER] = установить респаун\n[ESC] = отмена:2:2:1:9:4:01110000001000000001110000001010000000 ", new bool[0, 0], 123, 123, 12);
+            }
+            else if (id == 2)
+            {
+                packet = InventoryPacket.Choose("[ENTER] = установить UP\n[ESC] = отмена:2:1:2:3:4:010111101101 ", new bool[0, 0], 123, 123, 12);
+            }
+            else if (id == 3)
+            {
+                packet = InventoryPacket.Choose("[ENTER] = установить маркет\n[ESC] = отмена:2:4:4:9:9:000000000000000000001101100001101100000000000001101100001101100000000000000000000 ", new bool[0, 0], 123, 123, 12);
+            }
+            else if (id == 5)
+            {
+                packet = InventoryPacket.Choose("[ENTER] = установить бомбу\n[ESC] = отмена:1:3:3:7:7:0011100011111011111111111111111111101111100011100 ", new bool[0, 0], 123, 123, 12);
+            }
+            else if (id == 6)
+            {
+                packet = InventoryPacket.Choose("[ENTER] = установить бомбу\n[ESC] = отмена:1:1:1:3:3:111111111 ", new bool[0, 0], 123, 123, 12);
+            }
+            else if (id == 7)
+            {
+                packet = InventoryPacket.Choose("[ENTER] = установить бомбу\n[ESC] = отмена:1:9:9:19:19:0000001111111000000000011111111111000000011111111111110000011111111111111100011111111111111111001111111111111111101111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111011111111111111111001111111111111111100011111111111111100000111111111111100000001111111111100000000001111111000000 ", new bool[0, 0], 123, 123, 12);
+            }
+            else {  packet = InventoryPacket.Choose("Неопознанный обьект", new bool[0, 0], 123, 123, 12); }
+                selected = id;
+                if (id == -1)
+                    packet = InventoryPacket.Close();
+                p.connection?.SendU(InvToSend());
+                p.connection?.SendU(packet);
+            }
         public int selected = -1;
         [NotMapped]
         public int Lenght

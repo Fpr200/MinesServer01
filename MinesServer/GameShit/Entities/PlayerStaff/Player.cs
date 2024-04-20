@@ -263,7 +263,7 @@ namespace MinesServer.GameShit.Entities.PlayerStaff
         }
         private void Mine(byte cell, int x, int y)
         {
-            float dob = 1f;
+            float dob = 0.2f;
             Random rand = new Random();
             foreach (var c in skillslist.skills.Values)
             {
@@ -279,27 +279,27 @@ namespace MinesServer.GameShit.Entities.PlayerStaff
                         c.AddExp(this, 1);
                         dob += c.Effect;
                     }
-                    if (c.type == SkillType.MineBlue && (CellType)cell == CellType.XBlue | (CellType)cell == CellType.Blue)
+                    else if (c.type == SkillType.MineBlue && (CellType)cell == CellType.XBlue | (CellType)cell == CellType.Blue)
                     {
                         c.AddExp(this, 1);
                         dob += c.Effect;
                     }
-                    if (c.type == SkillType.MineRed && (CellType)cell == CellType.XRed | (CellType)cell == CellType.Red)
+                    else if (c.type == SkillType.MineRed && (CellType)cell == CellType.XRed | (CellType)cell == CellType.Red)
                     {
                         c.AddExp(this, 1);
                         dob += c.Effect;
                     }
-                    if (c.type == SkillType.MineViolet && (CellType)cell == CellType.XViolet | (CellType)cell == CellType.Violet)
+                    else if (c.type == SkillType.MineViolet && (CellType)cell == CellType.XViolet | (CellType)cell == CellType.Violet)
                     {
                         c.AddExp(this, 1);
                         dob += c.Effect;
                     }
-                    if (c.type == SkillType.MineWhite && (CellType)cell == CellType.White)
+                    else if (c.type == SkillType.MineWhite && (CellType)cell == CellType.White)
                     {
                         c.AddExp(this, 1);
                         dob += c.Effect;
                     }
-                    if (c.type == SkillType.MineCyan && (CellType)cell == CellType.XCyan | (CellType)cell == CellType.Cyan)
+                    else if (c.type == SkillType.MineCyan && (CellType)cell == CellType.XCyan | (CellType)cell == CellType.Cyan)
                     {
                         c.AddExp(this, 1);
                         dob += c.Effect;
@@ -712,7 +712,14 @@ namespace MinesServer.GameShit.Entities.PlayerStaff
                 }
             }
             Health = Health <= 0 ? MaxHealth : Health;
-            connection.auth = null;
+            try
+            {
+                connection.auth = null;
+            }
+            catch
+            {
+
+            }
             crys.player = this;
             connection?.SendWorldInfo();
             this.SendAutoDigg();
@@ -1001,14 +1008,14 @@ namespace MinesServer.GameShit.Entities.PlayerStaff
         #region health
         public override bool Heal(int num = -1)
         {
-             var heal = 0f;
+            var heal = 0f;
             Random rand = new Random();
-             foreach (var c in skillslist.skills.Values)
-             {
-                 if (c != null && c.UseSkill(SkillEffectType.OnHealth, this))
+            foreach (var c in skillslist.skills.Values)
+            {
+                if (c != null && c.UseSkill(SkillEffectType.OnHealth, this))
                 {
                     if (c.type == SkillType.Repair)
-                     {
+                    {
                         if (crys.cry[2] > 0)
                         {
                             heal = c.Effect;
@@ -1035,7 +1042,7 @@ namespace MinesServer.GameShit.Entities.PlayerStaff
             }
             return false;
         }
-
+        
         public override void Hurt(int num, DamageType t = DamageType.Pure)
         {
             foreach (var c in skillslist.skills.Values)
@@ -1068,7 +1075,16 @@ namespace MinesServer.GameShit.Entities.PlayerStaff
                     }
                 }
             }
-            if (Health - num > 0)
+            if (num == 500)
+            {
+                if (Health - num > 0){
+                    Health -= num;
+                    SendDFToBots(6, 0, 0, id, 0);
+                    Thread.Sleep(100);
+                }
+                else { Death(); Thread.Sleep(100); }
+            }
+            else if (Health - num > 0)
             {
                 Health -= num;
                 SendDFToBots(6, 0, 0, id, 0);
@@ -1146,6 +1162,11 @@ namespace MinesServer.GameShit.Entities.PlayerStaff
                 RunProgramm();
                 connection?.SendU(new ProgrammatorPacket(false));
             }
+        }
+        public void ReSend()
+        {
+            
+            connection?.Socket.Dispose(); connection?.SendU(new ReconnectPacket());
         }
         #endregion
     }

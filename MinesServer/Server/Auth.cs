@@ -46,6 +46,7 @@ namespace MinesServer.Server
         }
         public void TryToAuth(AUPacket p, string sid, Session initiator, System.Net.IPAddress ip)
         {
+            initiator.SendU(new StatusPacket("Init"));
             int res;
             Player player = null;
             if (p.user_id.HasValue)
@@ -65,6 +66,7 @@ namespace MinesServer.Server
             }
             if (player == null || p.token != CalculateMD5Hash(player.hash + sid))
             {
+                
                 initiator.SendU(new WorldInfoPacket(World.W.name, World.CellsWidth, World.CellsHeight, 341, "3.41", "http://pi.door/", "ok"));
                 authwin = new Window()
                 {
@@ -90,6 +92,7 @@ namespace MinesServer.Server
             else if (player != null && player.connection == null && CalculateMD5Hash(player.hash + sid) == p.token)
             {
 
+                initiator.SendU(new StatusPacket("Inited"));
                 player.connection = initiator;
                 initiator.player = player;
                 player.Init();
@@ -97,7 +100,13 @@ namespace MinesServer.Server
             }
             else if (player != null && player.connection != null && CalculateMD5Hash(player.hash + sid) == p.token)
             {
-                initiator.SendU(new StatusPacket("Игрок онлайн"));
+                
+                initiator.SendU(new StatusPacket("Inited"));
+                player.ReSend();
+                player.connection = initiator;
+                initiator.player = player;
+                Thread.Sleep(1000);
+                player.Init();
                 return;
             }
             if (player == null)

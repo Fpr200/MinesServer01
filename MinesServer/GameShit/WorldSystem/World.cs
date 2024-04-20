@@ -8,6 +8,8 @@ using MinesServer.Network.GUI;
 using MinesServer.Network.HubEvents.FX;
 using MinesServer.Network.World;
 using MinesServer.Server;
+using NetCoreServer;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.IO.Pipes;
 using System.Numerics;
@@ -259,9 +261,10 @@ namespace MinesServer.GameShit.WorldSystem
             }
             var cell = GetCell(x, y);
             var durability = GetDurability(x, y);
-            Destroy(x, y, destroytype.Cell);
-            SetCell(x + plusx, y + plusy, cell);
-            SetDurability(x + plusx, y + plusy, durability);
+
+                Destroy(x, y, destroytype.Cell);
+                SetCell(x + plusx, y + plusy, cell);
+                SetDurability(x + plusx, y + plusy, durability);
         }
         public static void SetCell(int x, int y, CellType type) => SetCell(x, y, (byte)type);
         public static void SetCell(int x, int y, byte cell, bool packmesh = false)

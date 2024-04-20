@@ -119,7 +119,7 @@ namespace MinesServer.GameShit.Consumables
         {
            var ch = World.W.GetChunk(x, y);
             ch.SendPack('B', x, y, 0, 0);
-            World.W.AsyncAction(10, () =>
+            World.W.AsyncAction(30, () =>
             {
                 for (int _x = -4; _x <= 4; _x++)
                 {
@@ -153,12 +153,13 @@ namespace MinesServer.GameShit.Consumables
                 ch.SendDirectedFx(1, x, y, 3, 0, 0);
                 ch.ClearPack(x, y);
             });
+            
         }
         public static void Prot(int x, int y, Player player)
         {
             var ch = World.W.GetChunk(x, y);
             ch.SendPack('B', x, y, 0, 1);
-            World.W.AsyncAction(10, () =>
+            World.W.AsyncAction(20, () =>
             {
                 for (int _x = -1; _x <= 1; _x++)
                 {
@@ -187,8 +188,9 @@ namespace MinesServer.GameShit.Consumables
         {
             var ch = World.W.GetChunk(x, y);
             ch.SendPack('B', x, y, 0, 2);
-            World.W.AsyncAction(15, () =>
+            World.W.AsyncAction(50, () =>
             {
+                
                 using var db = new DataBase();
                 for (int _x = -10; _x <= 10; _x++)
                 {

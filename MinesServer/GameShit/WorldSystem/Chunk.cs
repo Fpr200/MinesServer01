@@ -37,6 +37,7 @@ namespace MinesServer.GameShit.WorldSystem
         public void Update()
         {
             var now = ServerTime.Now;
+            
             if (shouldbeloaded())
             {
                 CheckBots();
@@ -221,7 +222,8 @@ namespace MinesServer.GameShit.WorldSystem
             for (int y = 0; y < 32; y++)
             {
                 for (int x = 0; x < 32; x++)
-                {
+            {
+            
                     var prop = World.GetProp(this[x, y]);
                     if (prop.isSand || prop.isBoulder)
                     {
@@ -271,7 +273,7 @@ namespace MinesServer.GameShit.WorldSystem
                 UpdateAlive();
                 lastupdalive = now;
             }
-            if (now - sandandb > TimeSpan.FromMilliseconds(300))    
+            if (now - sandandb > TimeSpan.FromMilliseconds(400))    
             {
                 UpdateSandBoulders();
                 sandandb = now;

@@ -38,7 +38,6 @@ namespace MinesServer.Server
         protected override void OnConnected()
         {
             sid = Auth.GenerateSessionId();
-            SendU(new StatusPacket("Inited"));
             SendU(new AUPacket(sid));
             SendU(new PingPacket(0, 0, ""));
         }
